@@ -33,14 +33,14 @@ def normalize(flname):
 
 def splitting(Mono,width,step,fs):
     # convertion en ms
-    step /= 1000 # convertion de ms en s
-    width/= 1000
+    #step /= 1000 # convertion de ms en s
+    #width/= 1000
     
-    step *= fs #on échantillonne le pas et la fenêtre
-    width*= fs
+    #step *= fs #on échantillonne le pas et la fenêtre
+    #width*= fs
     
-    step = int(step)
-    width  = int(width) # on le met en entier car correspond aux positions dans la matrice
+    #step = int(step)
+    #width  = int(width) # on le met en entier car correspond aux positions dans la matrice
     
     Mono_splitting = [] # tableau d'echantillon
     
@@ -62,6 +62,25 @@ def energy(data):
 	return energy
 
 
+def energyframe(data):
+	
+	energyf = np.zeros(len(data))
+	voice = np.zeros(len(data))
+	threshold =0
+	for i in range (0, len (data)):
+		energyf[i]=0
+		for j in range (0, len(data[0])):
+			energyf[i] += data[i][j]**2
+		threshold += energyf[i]
+	threshold = threshold/(len (data))
+	for k in range (0,len(data)):
+		if energyf[k] < threshold:
+			voice[k] = 0
+		else :
+			voice[k] = 1
+	
+	return energyf , threshold , voice
+
 
 
 
@@ -71,9 +90,9 @@ def energy(data):
 
 
 def main():
-	step=0.1
-	width=0.1
-	for x in range (1,1133):
+	step=10
+	width=40
+	'''for x in range (1,1133):
 		if x <=9:
 			a = 'a000'+ str(x)
 
@@ -93,19 +112,40 @@ def main():
 			a ='b00'+ str(x-593)
 
 		if x >=693 :
-			a='b0'+ str(x-593)
+			a='b0'+ str(x-593)'''
+	a = 'a0001'
+	print (a)
+	Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
+	Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
+	ms1 = splitting (Mono1,width,step,fs1)
+	ms2 = splitting (Mono2,width,step,fs2)
+	#print ('frame1' + str (ms1))
+	#print ('frame2' + str (ms2))
+	#print (ms)
+	#fr = frame(fs,dt,step,size)
+	e1 = energy(Mono1)
+	e2 = energy(Mono2)
+	print (len (Mono1))
 	
-		print (a)
-		Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
-		Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
-		ms1 = splitting (Mono1,width,step,fs1)
-		ms2 = splitting (Mono2,width,step,fs2)
-		#print (ms)
-		#fr = frame(fs,dt,step,size)
-		e1 = energy(ms1)
-		e2 = energy(ms2)
-		print ('energy de la personne 1 =' + str (e1))
-		print('energy de la personne 2 =' + str (e2))
-   		#print (energy)
+	
+	print ('energy de la personne 1 =' + str (e1))
+	print('energy de la personne 2 =' + str (e2))
+
+	ef1,moy1,v1 = energyframe(ms1)
+	print ('energy frame1' + str (ef1))
+	print(len (ms1))
+	print(len (ms1[0]))
+	print(len (ef1))
+	print(moy1)
+	
+	ef2,moy2,v2 = energyframe(ms2)
+	print ('energy frame2' + str (ef2))
+	print(len (ms2))
+	print(len (ms2[0]))
+	print(len (ef2))
+	print(moy2)
+	print(v2)
+	
+   	#print (energy)
 
 main()
