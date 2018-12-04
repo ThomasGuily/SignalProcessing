@@ -1,6 +1,8 @@
 import scipy.io.wavfile as wf
 import wave as wv
+from scipy.signal import find_peaks
 import numpy as np
+import matplotlib.pyplot as plt
 
 def normalize(flname):
 	fs,data = wf.read(flname,'r')
@@ -18,29 +20,16 @@ def normalize(flname):
 	return data,fs
 
 
-'''def frame(fs, data, step, size):
-    step *= fs
-    size *= fs
-    length = len(data)
-    i = 0
-    while i+size < length:
-        if i == 0:
-            FrameTab = data[i:i+size]
-        else:
-            FrameTab = np.array([[FrameTab],[data[i:i+size]]])
-        i += step
-    return FrameTab'''
-
 def splitting(Mono,width,step,fs):
     # convertion en ms
-    #step /= 1000 # convertion de ms en s
-    #width/= 1000
+    step /= 1000 # convertion de ms en s
+    width/= 1000
     
-    #step *= fs #on échantillonne le pas et la fenêtre
-    #width*= fs
+    step *= fs #on échantillonne le pas et la fenêtre
+    width*= fs
     
-    #step = int(step)
-    #width  = int(width) # on le met en entier car correspond aux positions dans la matrice
+    step = int(step)
+    width  = int(width) # on le met en entier car correspond aux positions dans la matrice
     
     Mono_splitting = [] # tableau d'echantillon
     
@@ -65,24 +54,30 @@ def energy(data):
 def energyframe(data):
 	
 	energyf = np.zeros(len(data))
-	voice = np.zeros(len(data))
+	f0 = np.zeros(len(data))
 	threshold =0
 	for i in range (0, len (data)):
 		energyf[i]=0
 		for j in range (0, len(data[0])):
 			energyf[i] += data[i][j]**2
 		threshold += energyf[i]
+
 	threshold = threshold/(len (data))
+
 	for k in range (0,len(data)):
+		c =plt.xcorr(data[k], data[k], maxlags=50)
+		x = find_peaks(c[1])
 		if energyf[k] < threshold:
-			voice[k] = 0
+			f0[k] = 0
 		else :
-			voice[k] = 1
+			f0[k] = x[0][int(len(x[0])/2)] - x[0][int(len(x[0])/2) - 1]
 	
-	return energyf , threshold , voice
+	
+	return energyf, threshold , f0
 
 
 
+	
 
 
 #MAIN
@@ -90,8 +85,8 @@ def energyframe(data):
 
 
 def main():
-	step=10
-	width=40
+	step=1
+	width=3.2
 	'''for x in range (1,1133):
 		if x <=9:
 			a = 'a000'+ str(x)
@@ -131,21 +126,15 @@ def main():
 	print ('energy de la personne 1 =' + str (e1))
 	print('energy de la personne 2 =' + str (e2))
 
-	ef1,moy1,v1 = energyframe(ms1)
+	ef1, moy1,f01 = energyframe(ms1)
 	print ('energy frame1' + str (ef1))
-	print(len (ms1))
-	print(len (ms1[0]))
-	print(len (ef1))
-	print(moy1)
 	
-	ef2,moy2,v2 = energyframe(ms2)
+	print(f01)
+	
+	ef2, moy2, f02 = energyframe(ms2)
 	print ('energy frame2' + str (ef2))
-	print(len (ms2))
-	print(len (ms2[0]))
-	print(len (ef2))
-	print(moy2)
-	print(v2)
 	
-   	#print (energy)
+	print(f02)
+	#print (energy)
 
 main()
