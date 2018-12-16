@@ -24,32 +24,32 @@ def pitch(data,fs):
 	
 	return energyf, f0
 
-    def cepstrum-based_pitch
+def cepstrum-based_pitch
 
-        for i in range(1,6)
-            random.randint(1,593)
-            if x <=9:
-			    a = 'a000'+ str(x)
+    for i in range(1,6)
+        random.randint(1,593)
+        if x <=9:
+		    a = 'a000'+ str(x)
 
-		    if x >=10 and x<=99 :
-			    a ='a00'+ str(x)
+	    if x >=10 and x<=99 :
+		    a ='a00'+ str(x)
 		
 
-		    if x >=100 and x<=593 :
-			    a='a0'+ str(x)
+	    if x >=100 and x<=593 :
+		    a='a0'+ str(x)
 
-            Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
+        Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
 		
-        for i in range(	1,6)
-			random.randint(1,593)
-		    if x <=9:
-			    a = 'b000'+ str(x)
+    for i in range(	1,6)
+		random.randint(1,593)
+	    if x <=9:
+		    a = 'b000'+ str(x)
 
-		    if x >=10 and x<=99 :
-			    a ='b00'+ str(x)
+	    if x >=10 and x<=99 :
+		    a ='b00'+ str(x)
 		
 
-		    if x >=100 and x<=593 :
-			    a='b0'+ str(x)
+	    if x >=100 and x<=593 :
+		    a='b0'+ str(x)
 
-	        Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
+        Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
