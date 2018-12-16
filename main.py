@@ -40,6 +40,6 @@ def main():
 	ms2 = makeframe (Mono2,width,step,fs2)
 	e1,f01 = pitch (ms1,fs1)
 	print (e1)'''
-	n = 5
+	n = 1
 	cepstrum(n)
 main()

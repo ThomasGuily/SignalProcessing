@@ -7,9 +7,9 @@ import random
 from Preprocessing import makeframe, normalize
 
 def pitch(data,fs):
-    '''energyf = np.zeros(len(data))
+    energyf = np.zeros(len(data))
     f0 = np.zeros(len(data))
-    threshold = 6.5
+    threshold = 7
 	for k in range (0,len(data)):
         energyf[k] = energy(data[k])
         c =plt.xcorr(data[k], data[k], maxlags=50)
@@ -20,7 +20,7 @@ def pitch(data,fs):
             f0[k] = (x[0][int(len(x[0])/2)] - x[0][int(len(x[0])/2) - 1])
 	
 	
-    return energyf, f0'''
+    return energyf, f0
 
              
 def sceptrum(Mono_splitting,fs):
@@ -48,12 +48,14 @@ def sceptrum(Mono_splitting,fs):
     peaks=find_peaks(h)
     #on est dans un domaine temporel
     peaksvalues=[]
-    F0 = (peaks[0][int(len(peaks[0])/2)] - peaks[0][int(len(peaks[0])/2) - 1]) 
+    middleIndex = int((np.size(peaks) - 1)/2)
+    if(np.size(peaks) != 1):
+        F0=(peaks[0][middleIndex+1]-peaks[0][middleIndex])
     return F0
 
 def cepstrum(n):
-    step=1
-    width=1
+    step=15
+    width=30
     for j in range(1,n+1):
         x = random.randint(1,539)
 
@@ -72,6 +74,7 @@ def cepstrum(n):
         Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
         ms1 = makeframe (Mono1,width,step,fs1)
         
+        
        
 
 
@@ -87,13 +90,13 @@ def cepstrum(n):
             a='b0'+ str(x)
         print(a)
         Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
-        ms2 = makeframe (Mono2,width,step,fs2)'''
+        ms2 = makeframe (Mono2,width,step,fs2)
         
 
         
         E=[]
         F0=[]
-        threshold = 10
+        threshold = 7
         for i in range (0,len(ms1)):
             Ef=energy(ms1[i])
             E.append(Ef)
@@ -103,6 +106,9 @@ def cepstrum(n):
                 F0.append(sceptrum(ms1[i],fs1))
             else:
                 F0.append(0)
-        #F0=np.asarray(F0)
-        print (len(E))
+            print (Ef)
+            print ('boucle')
+        print (E,F0)
+        #F0=np.asarray(F0)'''
+       
     
