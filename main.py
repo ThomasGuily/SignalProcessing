@@ -6,6 +6,7 @@ from Energy import energy
 from Preprocessing import makeframe, normalize
 from Pitch import pitch, cepstrum
 
+
 #MAIN
 def main():
 	step=1
@@ -30,7 +31,7 @@ def main():
 			a ='b00'+ str(x-593)
 
 		if x >=693 :
-			a='b0'+ str(x-593)'''
+			a='b0'+ str(x-593)
 	a = 'a0001'
 	print (a)
 	Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
@@ -38,5 +39,7 @@ def main():
 	ms1 = makeframe (Mono1,width,step,fs1)
 	ms2 = makeframe (Mono2,width,step,fs2)
 	e1,f01 = pitch (ms1,fs1)
-	print (e1)
+	print (e1)'''
+	n = 5
+	cepstrum(n)
 main()
