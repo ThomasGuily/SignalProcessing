@@ -24,7 +24,7 @@ def pitch(data,fs):
 	
 	return energyf, f0
 
-def cepstrum-based_pitch
+def cepstrum()
 
     for i in range(1,6)
         random.randint(1,593)
@@ -53,3 +53,4 @@ def cepstrum-based_pitch
 		    a='b0'+ str(x)
 
         Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
+	return 0

@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Energy import energy
 from Preprocessing import makeframe, normalize
-from Pitch import pitch # , cepstrum-based_pitch
+from Pitch import pitch, cepstrum
 
 #MAIN
 def main():
