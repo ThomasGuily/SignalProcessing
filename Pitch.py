@@ -9,76 +9,103 @@ from Preprocessing import makeframe, normalize
 def pitch(data,fs):
     energyf = np.zeros(len(data))
     f0 = np.zeros(len(data))
-    threshold = 7
-	for k in range (0,len(data)):
+    threshold = 8
+    for k in range (0,len(data)):
         energyf[k] = energy(data[k])
         c =plt.xcorr(data[k], data[k], maxlags=50)
         x = find_peaks(c[1])
-        if energyf[k] < threshold:
-            f0[k] = 0
-		else :
+
+        if energyf[k] > threshold:
             f0[k] = (x[0][int(len(x[0])/2)] - x[0][int(len(x[0])/2) - 1])
-	
+        #if (np.size(x) != 1):
+            #f0[k]= (x[0][int(np.size(x[0])/2)])- (x[0][int(np.size(x[0])/2) - 1])
 	
     return energyf, f0
 
              
-def sceptrum(Mono_splitting,fs):
-    '''f0 =[]
-    for i in range (len(voice)) :
-        if voice[i] == 1 :
-             w, h =sig.freqz(Mono_splitting[i],1, worN=None, whole=False, plot=None)
-             
-             L = 20*np.log10(np.abs(h))
-             
-             inverse= np
-             f0.append(np.max(inverse))
-        else:
-             
-             f0.append(0)
-             
-    return f0'''
-    F0=0
+def sceptrum(data,fs):
+    energyf = np.zeros(len(data))
+    f0 = np.zeros(len(data))
+    threshold = 8
+    for k in range (0,len(data)):
+        
+        energyf[k] = energy(data[k])
+
+        w, h = sig.freqz(data[k])
+        #h=np.fft.ifft(20 * np.log10(abs(h)))# The frequency response, as complex numbers. #spectrum
+        #f=w*fs/(2*np.pi) 
     
-    w, h = sig.freqz(Mono_splitting)
-    h=np.fft.ifft(20 * np.log10(abs(h)))# The frequency response, as complex numbers.
-    h=20 * np.log10(abs(h))  #spectrum
-    f=w*fs/(2*np.pi) 
+        #x=find_peaks(h)
+        
+        #on est dans un domaine temporel
+        #peaksvalues=[]
     
-    peaks=find_peaks(h)
-    #on est dans un domaine temporel
-    peaksvalues=[]
-    middleIndex = int((np.size(peaks) - 1)/2)
-    if(np.size(peaks) != 1):
-        F0=(peaks[0][middleIndex+1]-peaks[0][middleIndex])
-    return F0
+        #for i in range (10,len(x)-10,1):
+            #peaksvalues.append(h[i]) 
+
+        #f0[k]=np.argmax(peaksvalues)
+
+        return f0
 
 def cepstrum(n):
     step=15
     width=30
-    for j in range(1,n+1):
+    itr = 1
+    for j in range(0,n):
         x = random.randint(1,539)
+
 
         if x <=9:
 
             a = 'a000'+ str(x)
+
         if x >=10 and x<=99 :
 
             a ='a00'+ str(x)
 		
 
-        if x >=100 and x<=593 :
+        if x >=100 and x<=539 :
 
             a='a0'+ str(x)
-            print (a)
+        print (a)
+
+
         Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
         ms1 = makeframe (Mono1,width,step,fs1)
+        ef1,f01 = pitch (ms1,fs1)
+        F01 = sceptrum(ms1,fs1)
+        
+        plt.figure(itr)
+        f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
+        f.suptitle('FICHIER artic_' + a +'.wav')
+
+        plt.subplot(221)
+        plt.plot(np.linspace(0,(1/fs1)*len(Mono1),num=len(Mono1)),Mono1)
+        plt.title('Temporal visualisation : FICHIER artic_' + a +'.wav' )
+        plt.xlabel('Time (s)')
+        plt.ylabel('Value of the sample')
+        plt.subplot(222)
+        plt.plot(np.linspace(0,len(ms1),num = len(ms1)),ef1)
+        plt.title('Energy frame visualisation' )
+        plt.xlabel('Frame number')
+        plt.ylabel('Energy of the frame')
+        plt.subplot(223)
+        plt.plot(np.linspace(0,len(ms1),num = len(ms1)),f01)
+        plt.title('Correlation pitch method' )
+        plt.xlabel('Frame number')
+        plt.ylabel('f0')
+        plt.subplot(224)
+        plt.plot(np.linspace(0,len(ms1),num = len(ms1)),F01)
+        plt.title('Cepstrum pitch method')
+        plt.xlabel('Frame number')
+        plt.ylabel('F0')
+        
+        itr = itr +1
         
         
-       
+        
+        x = random.randint(1,539)
 
-
-        '''x = random.randint(1,539)
         if x <=9:
             a = 'b000'+ str(x)
 
@@ -86,29 +113,41 @@ def cepstrum(n):
             a ='b00'+ str(x)
 		
 
-        if x >=100 and x<=593 :
+        if x >=100 and x<=539 :
             a='b0'+ str(x)
         print(a)
+
         Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
         ms2 = makeframe (Mono2,width,step,fs2)
-        
+        ef2,f02 = pitch (ms2,fs2)
+        F02 = sceptrum(ms2,fs2)
+        print (f02,F02)
 
+        plt.figure(itr)
+        f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
+        f.suptitle('FICHIER artic_' + a +'.wav')
         
-        E=[]
-        F0=[]
-        threshold = 7
-        for i in range (0,len(ms1)):
-            Ef=energy(ms1[i])
-            E.append(Ef)
-            """w=signal.hamming(len(ms1[i]))
-            ms1[i]= w*ms1[i]"""
-            if Ef > threshold:
-                F0.append(sceptrum(ms1[i],fs1))
-            else:
-                F0.append(0)
-            print (Ef)
-            print ('boucle')
-        print (E,F0)
-        #F0=np.asarray(F0)'''
-       
-    
+        plt.subplot(221)
+        plt.plot(np.linspace(0,(1/fs2)*len(Mono2),num=len(Mono2)),Mono2)
+        plt.title('Temporal visualisation '  )
+        plt.xlabel('Time (s)')
+        plt.ylabel('Value of the sample')
+        plt.subplot(222)
+        plt.plot(np.linspace(0,len(ms2),num = len(ms2)),ef2)
+        plt.title('Energy frame visualisation' )
+        plt.xlabel('Frame number')
+        plt.ylabel('Energy of the frame')
+        plt.subplot(223)
+        plt.plot(np.linspace(0,len(ms2),num = len(ms2)),f02)
+        plt.title('Correlation pitch method' )
+        plt.xlabel('Frame number')
+        plt.ylabel('f0')
+        plt.subplot(224)
+        plt.plot(np.linspace(0,len(ms2),num = len(ms2)),F02)
+        plt.title('Cepstrum pitch method')
+        plt.xlabel('Frame number')
+        plt.ylabel('F0')
+
+        itr = itr +1
+
+    plt.show()
