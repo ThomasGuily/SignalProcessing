@@ -3,11 +3,10 @@ import numpy as np
 
 def normalize(flname):
 	fs,data = wf.read(flname,'r')
-	#print ('fs' + str(fs))
 	data = np.array(data)
 	maxdata = max(abs(data))
 	data = data/maxdata
-	#print ('data' + str(data))
+	#normalisation
 	
 	return data,fs
 
@@ -20,7 +19,7 @@ def makeframe(Mono,width,step,fs):
     
     Mono_splitting = [] # tableau d'echantillon
     
-    #normalisation du signal d'entré
+    #normalisation du signal d'entrée
     #Mono_norm = normalize(Mono)
     
     #construction du tableau d'echantillon
