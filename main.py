@@ -4,12 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Energy import energy
 from Preprocessing import makeframe, normalize
-from Pitch import pitch, cepstrum
+from Pitch import pitch
 
 
 #MAIN
 def main():
 	
 	n = 1
-	cepstrum(n)
+	pitch(n)
 main()

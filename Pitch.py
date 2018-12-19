@@ -6,7 +6,7 @@ from Energy import energy
 import random
 from Preprocessing import makeframe, normalize
 
-def pitch(data,fs):
+def corrpitch(data,fs):
     energyf = np.zeros(len(data))
     f0 = np.zeros(len(data))
     threshold = 8
@@ -16,38 +16,41 @@ def pitch(data,fs):
         x = find_peaks(c[1])
 
         if energyf[k] > threshold:
-            f0[k] = (x[0][int(len(x[0])/2)] - x[0][int(len(x[0])/2) - 1])
+            f0[k] = (x[0][int(len(x[0])/2)]- x[0][int(len(x[0])/2) - 1])*16
         #if (np.size(x) != 1):
             #f0[k]= (x[0][int(np.size(x[0])/2)])- (x[0][int(np.size(x[0])/2) - 1])
 	
     return energyf, f0
 
              
-def sceptrum(data,fs):
+def cepstrumpitch(data,fs):
     energyf = np.zeros(len(data))
     f0 = np.zeros(len(data))
     threshold = 8
+    
     for k in range (0,len(data)):
-        
         energyf[k] = energy(data[k])
+        w=sig.hamming(len(data[k]))
+        data[k]= w *data [k]
+        
 
         w, h = sig.freqz(data[k])
-        #h=np.fft.ifft(20 * np.log10(abs(h)))# The frequency response, as complex numbers. #spectrum
+        h=np.fft.ifft(20 * np.log10(abs(h)))# The frequency response, as complex numbers. #spectrum
         #f=w*fs/(2*np.pi) 
     
-        #x=find_peaks(h)
+        x=find_peaks(h)
         
         #on est dans un domaine temporel
+        if energyf[k] > threshold:
+            f0[k] = 2*np.pi/(w[x[0][int(len(x[0])/2)]] - w[x[0][int(len(x[0])/2) - 1]])
         #peaksvalues=[]
-    
         #for i in range (10,len(x)-10,1):
             #peaksvalues.append(h[i]) 
 
         #f0[k]=np.argmax(peaksvalues)
+    return f0
 
-        return f0
-
-def cepstrum(n):
+def pitch(n):
     step=15
     width=30
     itr = 1
@@ -72,16 +75,16 @@ def cepstrum(n):
 
         Mono1,fs1 = normalize('../../audio/cmu_us_bdl_arctic/wav/arctic_' + a +'.wav')
         ms1 = makeframe (Mono1,width,step,fs1)
-        ef1,f01 = pitch (ms1,fs1)
-        F01 = sceptrum(ms1,fs1)
+        ef1,f01 = corrpitch (ms1,fs1)
+        F01 = cepstrumpitch(ms1,fs1)
         
         plt.figure(itr)
         f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
         f.suptitle('FICHIER artic_' + a +'.wav')
 
-        plt.subplot(221)
+        '''plt.subplot(221)
         plt.plot(np.linspace(0,(1/fs1)*len(Mono1),num=len(Mono1)),Mono1)
-        plt.title('Temporal visualisation : FICHIER artic_' + a +'.wav' )
+        plt.title('Temporal visualisation ' )
         plt.xlabel('Time (s)')
         plt.ylabel('Value of the sample')
         plt.subplot(222)
@@ -100,7 +103,7 @@ def cepstrum(n):
         plt.xlabel('Frame number')
         plt.ylabel('F0')
         
-        itr = itr +1
+        itr = itr +1'''
         
         
         
@@ -119,8 +122,8 @@ def cepstrum(n):
 
         Mono2,fs2 = normalize('../../audio/cmu_us_slt_arctic/wav/arctic_' + a +'.wav')
         ms2 = makeframe (Mono2,width,step,fs2)
-        ef2,f02 = pitch (ms2,fs2)
-        F02 = sceptrum(ms2,fs2)
+        ef2,f02 = corrpitch (ms2,fs2)
+        F02 = cepstrumpitch(ms2,fs2)
         print (f02,F02)
 
         plt.figure(itr)
